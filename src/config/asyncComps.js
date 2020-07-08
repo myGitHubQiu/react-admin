@@ -22,6 +22,10 @@ const Teacher = () => lazy(() => import("@pages/Edu/Teacher"));
 const Settings = () => lazy(() => import("@pages/User/Settings"));
 const Center = () => lazy(() => import("@pages/User/Center"));
 
+// 自己写的
+// 引入Subject组件
+const Subject = () => lazy(() => import("@pages/Edu/Subject"));
+
 export default {
   Admin,
   User,
@@ -37,4 +41,5 @@ export default {
   Teacher,
   Settings,
   Center,
+  Subject
 };
