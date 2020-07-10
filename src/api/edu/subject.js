@@ -1,14 +1,14 @@
 import request from "@utils/request";
 
-const BASE_URL = "admin/edu/subject";
+const BASE_URL = "/admin/edu/subject";
 
 // 现在要从mock上面获取数据
-const MOCK_URL = `http://localhost:8888/${BASE_URL}`
+// const MOCK_URL = `http://localhost:8888/${BASE_URL}`
 
 // 获取讲师
 export function reqGetSubjectList (page, limit) {
   return request({
-    url: `${MOCK_URL}/${page}/${limit}`,
+    url: `${BASE_URL}/${page}/${limit}`,
     method: "GET",
   });
 }

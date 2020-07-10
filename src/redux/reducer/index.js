@@ -8,6 +8,10 @@ import { userList } from "@pages/Acl/User/redux";
 import { roleList } from "@pages/Acl/Role/redux";
 import { menuList } from "@pages/Acl/Permission/redux";
 
+// 自己写的 
+// 引入subject中的reducer
+import { subjectList } from "@pages/Edu/Subject/redux";
+
 export default combineReducers({
   loading,
   user,
@@ -15,4 +19,5 @@ export default combineReducers({
   userList,
   roleList,
   menuList,
+  subjectList
 });
