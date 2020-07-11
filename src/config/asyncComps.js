@@ -25,6 +25,7 @@ const Center = () => lazy(() => import("@pages/User/Center"));
 // 自己写的
 // 引入Subject组件
 const Subject = () => lazy(() => import("@pages/Edu/Subject"));
+const AddSubject = () => lazy(() => import("@pages/Edu/Subject/components/AddSubject"));
 
 export default {
   Admin,
@@ -41,5 +42,6 @@ export default {
   Teacher,
   Settings,
   Center,
-  Subject
+  Subject,
+  AddSubject
 };
