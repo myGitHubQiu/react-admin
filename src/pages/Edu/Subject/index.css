@@ -8,3 +8,9 @@
 .subject .update-btn {
   margin-right: 20px;
 }
+.subject-input {
+  width: 30%;
+}
+.subject-button {
+  margin-right: 15px;
+}
