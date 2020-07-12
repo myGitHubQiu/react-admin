@@ -20,3 +20,15 @@ export function reqGetSecSubjectList (parentId) {
     method: "GET"
   })
 }
+
+// 新增课程分类 api 方法
+export function reqAddSubjectList (title, parentId) {
+  return request({
+    url: `${BASE_URL}/save`,
+    method: "POST",
+    data: {
+      title,
+      parentId
+    }
+  })
+}

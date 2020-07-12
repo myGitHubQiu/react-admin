@@ -2,9 +2,9 @@
 import React, { Component } from "react";
 
 // 引入按钮 表格
-import { Button, Table } from 'antd';
+import { Button, Table, Tooltip } from 'antd';
 
-// 引入ant中的 +号图标 编辑图标 删除图片 
+// 引入ant中的 +号图标 编辑图标 删除图片 Tooltip->文字提醒功能
 import { PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons'
 
 // 引入connect  高阶组件 返回容器组件
@@ -35,61 +35,25 @@ const columns = [
     render: () => (
       <>
         {/* 编辑按钮 */}
-        <Button type='primary' className='update-btn'>
-          <FormOutlined />
-        </Button>
+        <Tooltip title="点我编辑">
+          <Button type='primary' className='update-btn'>
+            <FormOutlined />
+          </Button>
+        </Tooltip>
+
         {/* 删除按钮 */}
-        <Button type='danger'>
-          <DeleteOutlined />
-        </Button>
+        <Tooltip title="点我删除">
+          <Button type='danger'>
+            <DeleteOutlined />
+          </Button>
+        </Tooltip>
+
       </>
     ),
     width: 200
   }
 ]
 
-// 后台数据
-// const data = [
-//   {
-//     key: 1,
-//     name: '前端',
-//     age: 32,
-//     address: '宝安大道西部硅谷大厦B座C区113尚硅谷',
-//     description:
-//       'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.'
-//   },
-//   {
-//     key: 2,
-//     name: '后端',
-//     age: 42,
-//     address: '宝安大道西部硅谷大厦B座C区113尚硅谷',
-//     description:
-//       'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.'
-//   },
-//   {
-//     key: 3,
-//     name: '运维',
-//     age: 32,
-//     address: '宝安大道西部硅谷大厦B座C区113尚硅谷',
-//     description:
-//       'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.'
-//   },
-//   {
-//     key: 4,
-//     name: '大数据',
-//     age: 32,
-//     address: '宝安大道西部硅谷大厦B座C区113尚硅谷',
-//     description:
-//       'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.'
-//   },
-//   {
-//     key: 5,
-//     name: 'Not Expandable',
-//     age: 29,
-//     address: '宝安大道西部硅谷大厦B座C区113尚硅谷',
-//     description: 'This not expandable'
-//   },
-// ]
 
 // redux数据状态
 @connect(
