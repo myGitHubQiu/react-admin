@@ -27,6 +27,7 @@ dayjs.extend(relativeTime);
     //   state.course.permissionValueList,
     //   "Course"
     // )
+    chapterList: state.chapterList
   })
   // { getcourseList }
 )
@@ -53,7 +54,7 @@ class Chapter extends Component {
     });
   };
 
-  componentDidMount() {
+  componentDidMount () {
     // const { page, limit } = this.state;
     // this.handleTableChange(page, limit);
   }
@@ -90,7 +91,7 @@ class Chapter extends Component {
     });
   };
 
-  render() {
+  render () {
     const { previewVisible, previewImage, selectedRowKeys } = this.state;
 
     const columns = [
@@ -290,8 +291,9 @@ class Chapter extends Component {
           <Table
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={data}
-            rowKey="id"
+            // 动态获取数据
+            dataSource={this.props.chapterList.items}
+            rowKey="_id"
           />
         </div>
 
