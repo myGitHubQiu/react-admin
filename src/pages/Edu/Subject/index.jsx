@@ -125,7 +125,7 @@ class Subject extends Component {
   // 点击编辑跟新按钮
   handleUpdateClick = (value) => {
     // 事件的真正处理函数
-    return (e) => {
+    return () => {
       // 拿到数据
       // console.log(value)
       // 修改数据 数据拿到了 也改变了 就可以拿改变的数据进行判断
@@ -134,6 +134,9 @@ class Subject extends Component {
         subjectId: value._id,
         subjectTitle: value.title
       })
+
+      // 当点击编辑按钮的时候 存储一下老的subjectTitle
+      this.oldSubjectTitle = value.title
     }
   }
 
@@ -155,6 +158,19 @@ class Subject extends Component {
   // 点击确认 事件处理函数
   handleUpdate = async () => {
     let { subjectId, subjectTitle } = this.state
+
+    // 优化 
+    // 1.如果用户输入的是空字符串 就不执行后面的代码
+    if (subjectTitle.length === 0) {
+      message.success('课程分类名称不能为空')
+      return
+    }
+    // 2.如果用户输入的内容和之前的相同 则不执行后面的代码（发送请求）
+    if (this.oldSubjectTitle === subjectTitle) {
+      message.success('课程分类名称不能和之前的相同')
+      return
+    }
+
     // 调用api方法发送请求
     await this.props.updateSubject(subjectId, subjectTitle)
     // 更新成功提示信息
