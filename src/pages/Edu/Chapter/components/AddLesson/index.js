@@ -4,17 +4,20 @@ import React, { Component } from 'react'
 // import { connect } from 'react-redux'
 
 // 引入card组件
-import { Card, Button, Form, Input, Switch, Upload, message } from 'antd'
+import { Card, Button, Form, Input, Switch, message } from 'antd'
 
 // 引入Link
 import { Link } from 'react-router-dom'
 
 // 引入antd中的图标
-import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons'
+import { ArrowLeftOutlined, } from '@ant-design/icons'
+
+// 引入上传组件
+import MyUpload from '../MyUpload/index'
 
 
 // 引入样式
-import './index.less'
+import './index.css'
 
 //表单布局属性
 const layout = {
@@ -49,7 +52,7 @@ class AddLesson extends Component {
         title={
           <>
             {/* to = 跳转到subject列表界面 */}
-            <Link to='edu/subject/list'>
+            <Link to='edu/chapter/list' className='chapter-btn'>
               {/* 返回图标 */}
               <ArrowLeftOutlined />
             </Link>
@@ -68,7 +71,7 @@ class AddLesson extends Component {
 
           initialValues={{
             // 键就是表单项的name属性的值
-            lessonname: '哈哈',
+            lessonname: '嗨小姐姐',
             free: true
           }}
         >
@@ -119,11 +122,8 @@ class AddLesson extends Component {
               }
             ]}
           >
-            <Upload>
-              <Button>
-                <UploadOutlined /> 上传视频
-              </Button>
-            </Upload>
+            {/* 引入上传视频组件 */}
+            <MyUpload></MyUpload>
           </Form.Item>
 
           <Form.Item>
