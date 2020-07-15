@@ -126,6 +126,18 @@ class Chapter extends Component {
           return isFree === true ? "是" : isFree === false ? "否" : "";
         },
       },
+
+      // 增加预览按钮
+      {
+        title: "视频",
+        render: (value) => {
+          // 如果value中有free 说明是课时 取反说明没有free就是课程
+          // 课程不需要展示视频按钮 所以返回
+          if (!value.free) return
+          // 能来到这里说明是课时 就把预览按钮给展示出来
+          return <Button>预览</Button>
+        },
+      },
       {
         title: "操作",
         width: 300,
@@ -134,17 +146,18 @@ class Chapter extends Component {
           // if ("free" in data) {
           return (
             <div>
-              <Tooltip title="新增课时">
-                <Button type="primary" onClick={this.handleToAddLesson(data)}>
+              {/* 如果data中的free全等undefined 说明没有free属性 是课程不展示这个按钮  */}
+              {data.free === undefined && <Tooltip title="新增课时">
+                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.handleToAddLesson(data)}>
                   <PlusOutlined />
                 </Button>
-              </Tooltip>
-              <Tooltip title="更新章节">
-                <Button type="primary" style={{ margin: "0 10px" }}>
+              </Tooltip>}
+              <Tooltip title={data.free === undefined ? "更新章节" : "更新课时"}>
+                <Button type="primary" style={{ marginRight: '10px' }}>
                   <FormOutlined />
                 </Button>
               </Tooltip>
-              <Tooltip title="删除章节">
+              <Tooltip title={data.free === undefined ? "删除章节" : "删除课时"}>
                 <Button type="danger">
                   <DeleteOutlined />
                 </Button>
