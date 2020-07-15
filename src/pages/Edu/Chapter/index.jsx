@@ -16,6 +16,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
 
+// 引入获取课程列表数据的异步action->getLessonList
+import { getLessonList } from './redux/index'
+
 import "./index.less";
 
 dayjs.extend(relativeTime);
@@ -28,7 +31,9 @@ dayjs.extend(relativeTime);
     //   "Course"
     // )
     chapterList: state.chapterList
-  })
+  }),
+  // connect 二次封装getLessonList 得到容器组件
+  { getLessonList }
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -41,6 +46,7 @@ class Chapter extends Component {
 
   showImgModal = (img) => {
     return () => {
+      // 处理
       this.setState({
         previewVisible: true,
         previewImage: img,
@@ -91,9 +97,18 @@ class Chapter extends Component {
     });
   };
 
+  // 定义展开章节按钮的事件处理函数
+  handleClickExpand = (expand, record) => {
+    // console.log(expand,record)  true为展开 false为不展开
+    if (expand) {
+      // 发送请求 获取数据
+      this.props.getLessonList(record._id)
+    }
+  }
+
   // 点击新增课时的跳转
-  handleToAddLesson = () => {
-    this.props.history.push('/edu/chapter/addlesson')
+  handleToAddLesson = data => () => {
+    this.props.history.push('/edu/chapter/addlesson', data)
   }
 
   render () {
@@ -120,7 +135,7 @@ class Chapter extends Component {
           return (
             <div>
               <Tooltip title="新增课时">
-                <Button type="primary" onClick={this.handleToAddLesson}>
+                <Button type="primary" onClick={this.handleToAddLesson(data)}>
                   <PlusOutlined />
                 </Button>
               </Tooltip>
@@ -299,6 +314,9 @@ class Chapter extends Component {
             // 动态获取数据
             dataSource={this.props.chapterList.items}
             rowKey="_id"
+            expandable={{
+              onExpand: this.handleClickExpand
+            }}
           />
         </div>
 

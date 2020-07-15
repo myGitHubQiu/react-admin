@@ -15,6 +15,8 @@ import { ArrowLeftOutlined, } from '@ant-design/icons'
 // 引入上传组件
 import MyUpload from '../MyUpload/index'
 
+// 引入新增课时组件
+import { reqAddLesson } from '@api/edu/lesson'
 
 // 引入样式
 import './index.css'
@@ -41,8 +43,24 @@ class AddLesson extends Component {
 
   // 新增课时
   // 点击添加按钮,表单校验成功之后的回调函数
-  onFinish = values => {
+  onFinish = async values => {
+    // console.log(values) 里面有title，free，video，还差个chapterId
+    // 发送请求 添加课时
+    // 获取chapterId
+    // console.log(this.props)
+    const chapterId = this.props.location.state._id
 
+    // 解构参数
+    const data = {
+      ...values,
+      chapterId
+    }
+    // 调用api方法
+    await reqAddLesson(data)
+    // 成功提示信息
+    message.success('新增课时成功')
+    // 跳转页面
+    this.props.history.push('/edu/chapter/list')
   }
 
   render () {
@@ -80,7 +98,7 @@ class AddLesson extends Component {
             // 表示提示文字
             label='课时分类名称'
             // 表单项提交时的属性
-            name='lessonname'
+            name='title'
             // 校验规则
             rules={[
               {

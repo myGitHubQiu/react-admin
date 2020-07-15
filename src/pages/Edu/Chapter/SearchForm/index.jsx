@@ -13,7 +13,7 @@ import { getChapterList } from '../redux/index'
 import "./index.less";
 
 const { Option } = Select;
-
+// 函数组件不能使用修饰器语法
 function SearchForm (props) {
 
   // 

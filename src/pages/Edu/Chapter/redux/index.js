@@ -1,5 +1,5 @@
 // 统一导入并导出
 import chapterList from './reducers'
-import { getChapterList } from './actions'
+import { getChapterList, getLessonList } from './actions'
 
-export { chapterList, getChapterList }
+export { chapterList, getChapterList, getLessonList }
