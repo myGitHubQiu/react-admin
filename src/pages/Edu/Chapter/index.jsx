@@ -13,6 +13,9 @@ import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 
+//导入知乎的griffith视频组件
+import Player from 'griffith'
+
 import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
 
@@ -42,16 +45,16 @@ class Chapter extends Component {
     previewVisible: false,
     previewImage: "",
     selectedRowKeys: [],
+    video: ''
   };
 
-  showImgModal = (img) => {
-    return () => {
-      // 处理
-      this.setState({
-        previewVisible: true,
-        previewImage: img,
-      });
-    };
+  showModal = video => () => {
+    // 处理
+    this.setState({
+      previewVisible: true,
+      video: video
+      // previewImage: img,
+    });
   };
 
   handleImgModal = () => {
@@ -135,7 +138,7 @@ class Chapter extends Component {
           // 课程不需要展示视频按钮 所以返回
           if (!value.free) return
           // 能来到这里说明是课时 就把预览按钮给展示出来
-          return <Button>预览</Button>
+          return <Button onClick={this.showModal(value.video)}>预览</Button>
         },
       },
       {
@@ -282,6 +285,19 @@ class Chapter extends Component {
       // ]
     };
 
+    // 视频预览 定义视频资源
+    const sources = {
+      hd: {
+        play_url: this.state.video,
+        bitrate: 1,
+        duration: 1000,
+        format: '',
+        height: 500,
+        size: 160000,
+        width: 500
+      }
+    }
+
     return (
       <div>
         <div className="course-search">
@@ -332,13 +348,23 @@ class Chapter extends Component {
             }}
           />
         </div>
-
+        {/* antd中对话组件 预览功能就是在这里使用 */}
         <Modal
+          title="视频"
           visible={previewVisible}
-          footer={null}
+          // footer={null}
           onCancel={this.handleImgModal}
+          // Modal组件有一个destroyOnClose属性(关闭modal时销毁里面的子组件)
+          destroyOnClose={true}
         >
-          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+          {/* <img alt="example" style={{ width: "100%" }} src={previewImage} /> */}
+          <Player
+            sources={sources}
+            id={'1'}
+            cover={'http://localhost:3000/logo512.png'}
+            duration={1000}
+          >
+          </Player>
         </Modal>
       </div>
     );
