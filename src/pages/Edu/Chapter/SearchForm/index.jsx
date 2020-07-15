@@ -7,10 +7,12 @@ import { connect } from 'react-redux'
 // 引入api
 import { reqGetCourseList } from '@api/edu/course'
 
-// 引入异步api方法
-import { getChapterList } from '../redux/index'
+// 引入action中的异步api方法 为什么在redux中是index引入不了
+import { getChapterList } from '../redux/actions'
 
 import "./index.less";
+
+// console.log(getChapterList)
 
 const { Option } = Select;
 // 函数组件不能使用修饰器语法
@@ -22,7 +24,7 @@ function SearchForm (props) {
   const [form] = Form.useForm();
 
   const resetForm = () => {
-    form.resetFields();
+    form.resetFields(['courseId']);
   };
 
   // 获取课程列表数据
@@ -39,13 +41,13 @@ function SearchForm (props) {
 
   // 根据课程id获取章节数据
   const handleGetChapterList = async (value) => {
-    console.log(value)
+    // console.log(value)
     const data = {
       page: 1,
       limit: 10,
       courseId: value.courseId
     }
-    console.log(data)
+    // console.log(data)
     await props.getChapterList(data)
     message.success('课程章节列表数据获取成功')
   }
@@ -77,7 +79,4 @@ function SearchForm (props) {
     </Form>
   );
 }
-
-
-
 export default connect(null, { getChapterList })(SearchForm);

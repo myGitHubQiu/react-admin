@@ -9,7 +9,7 @@ import { roleList } from "@pages/Acl/Role/redux";
 import { menuList } from "@pages/Acl/Permission/redux";
 
 // 自己写的 
-// 引入subject中的reducer
+// 引入subject中的reducer chapterList
 import { subjectList } from "@pages/Edu/Subject/redux";
 import { chapterList } from "@pages/Edu/Chapter/redux";
 

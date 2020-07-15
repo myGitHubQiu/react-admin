@@ -16,11 +16,14 @@ import relativeTime from "dayjs/plugin/relativeTime";
 //导入知乎的griffith视频组件
 import Player from 'griffith'
 
+//2. 导入全屏组件
+import screenfull from 'screenfull'
+
 import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
 
 // 引入获取课程列表数据的异步action->getLessonList
-import { getLessonList } from './redux/index'
+import { getLessonList, batchDelChapter, batchDelLesson } from './redux/actions'
 
 import "./index.less";
 
@@ -36,7 +39,7 @@ dayjs.extend(relativeTime);
     chapterList: state.chapterList
   }),
   // connect 二次封装getLessonList 得到容器组件
-  { getLessonList }
+  { getLessonList, batchDelChapter, batchDelLesson }
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -112,6 +115,63 @@ class Chapter extends Component {
   // 点击新增课时的跳转
   handleToAddLesson = data => () => {
     this.props.history.push('/edu/chapter/addlesson', data)
+  }
+
+  // 点击批量删除按钮的事件处理函数
+  handleBatchDel = () => {
+    // 友情提示
+    Modal.confirm({
+      title: '确定要批量删除吗?',
+      onOk: async () => {
+        // console.log('yes')
+        // selectedRowKeys里面存储的是所有的选中的课时和章节
+        // 在删除之前要先分清哪些是课时的id 哪些是章节的id
+        // 存储章节id
+        let chapterIds = []
+        // 存储课时id
+        let lessonIds = []
+
+        // 拿到所有选中的id
+        let selectedRowKeys = this.state.selectedRowKeys
+        // 所有章节数据都存储在redux里面
+        // 获取所有章节数据
+        let chapterList = this.props.chapterList.items
+        // 遍历章节所有数据chapterList 拿到每个章节id
+        chapterList.forEach(chapter => {
+          // 找到每一条章节的id
+          let chapterId = chapter._id
+          // 拿到章节id到selectedRowKeys中找
+          // 如果selectedRowKeys中有chapterId 就返回这个id对应的下标 没有就返回-1
+          let index = selectedRowKeys.indexOf(chapterId)
+          // 判断index值
+          if (index > -1) {
+            // 来到这里 证明找到了
+            // 找到后就从selectedRowKeys中把这条数据切割出来
+            // splice会修改原来的数组，并返回切割后的新的数组
+            let newArr = selectedRowKeys.splice(index, 1)
+            // 把切割后的每条章节id一条一条push到新的数组中
+            chapterIds.push(newArr[0])
+          }
+        })
+        // console.log(chapterIds)
+        // console.log(selectedRowKeys)
+        // 循环后的selectedRowKeys就是剩下的课时id
+        lessonIds = [...selectedRowKeys]
+
+        // 调用api方法  批量删除章节数据
+        await this.props.batchDelChapter(chapterIds)
+        await this.props.batchDelLesson(lessonIds)
+        // 成功后的提示信息 应该是在上面那两个删除方法成功后才调用
+        // 所以要写成异步方法
+        message.success('删除章节-课时数据成功')
+      }
+    })
+  }
+
+  // 全屏功能
+  handleScreenFull = () => {
+    // screenfull.request()// 整个页面全屏 只能打开全屏, 按esc键退出全屏
+    screenfull.toggle() // 点击全屏按钮,可以展开也可以关闭
   }
 
   render () {
@@ -250,6 +310,7 @@ class Chapter extends Component {
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
+      //#region
       // hideDefaultSelections: true,
       // selections: [
       //   Table.SELECTION_ALL,
@@ -283,6 +344,7 @@ class Chapter extends Component {
       //     }
       //   }
       // ]
+      //#/region
     };
 
     // 视频预览 定义视频资源
@@ -311,10 +373,18 @@ class Chapter extends Component {
                 <PlusOutlined />
                 <span>新增</span>
               </Button>
-              <Button type="danger" style={{ marginRight: 10 }}>
+              <Button
+                type="danger"
+                style={{ marginRight: 10 }}
+                onClick={this.handleBatchDel}
+              >
                 <span>批量删除</span>
               </Button>
-              <Tooltip title="全屏" className="course-table-btn">
+              <Tooltip
+                title="全屏"
+                className="course-table-btn"
+                onClick={this.handleScreenFull}
+              >
                 <FullscreenOutlined />
               </Tooltip>
               <Tooltip title="刷新" className="course-table-btn">
