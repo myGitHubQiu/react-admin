@@ -5,144 +5,183 @@ import { Form, Input, Select, Cascader, Button } from "antd";
 import { reqGetAllTeacherList } from '@api/edu/teacher'
 
 // 引入 获取所有一级分类课程数据的api
-import { reqAllSubjectList } from '@api/edu/subject'
+import { reqAllSubjectList, reqGetSecSubjectList } from '@api/edu/subject'
 
 import "./index.less";
 
-const { Option } = Select;
+const { Option } = Select
 
 function SearchForm () {
-  const [form] = Form.useForm();
-
-  // 函数组件没有state存储数据 要使用useState
-  // 定义存储讲师状态数据
+  const [form] = Form.useForm()
+  // 定义存储讲师列表的状态
   const [teacherList, setTeacherList] = useState([])
-  // 定义存储一级分类课程数据
+  // 定义存储所有一级课程分类的状态
   const [subjectList, setSubjectList] = useState([])
 
-  // 这是函数组件 要用useEffect模拟componentDidMount 组件挂载
-  useEffect(() => {
-    // console.log(111)
-    async function fetchData () {
-      // 调用异步api 而函数组件useEffect不能直接使用异步async
-      // 所有定义个函数
-      // console.log(222)
-      // 获取所有教师列表数据
-      // const teacher = await reqGetAllTeacherList()
-      // 获取所有一级分类课程数据
-      // const subject = await reqAllSubjectList()
+  // const [options, setOptions] = useState([])
 
-      // 统一发送请求
-      const [teachers, subjects] = await Promise.all([
+  // 利用useEffect,实现组件挂载获取数据
+  useEffect(() => {
+    async function fetchData () {
+      // 注意: 这样的写法,会导致获取完讲师数据,再请求课程分类.会比较耗时
+      // 所以要使用Promise.all来实现
+      // const teachers = await reqGetAllTeacherList()
+      // const subjectList = await reqALLSubjectList()
+
+      // 等所有请求的数据响应了之后,会拿到对应的数据
+      const [teachers, subjectList] = await Promise.all([
         reqGetAllTeacherList(),
         reqAllSubjectList()
       ])
-      //  把得到的数组放到状态数据里面
+      // console.log(res)
+
+      const options = subjectList.map(subject => {
+        return {
+          value: subject._id,
+          label: subject.title,
+          // false表示有子数据, true表示没有子数据
+          isLeaf: false
+        }
+      })
+
+      setSubjectList(options)
       setTeacherList(teachers)
-      setSubjectList(subjects)
+      // setSubjectList(subjectList)
     }
+
     fetchData()
-    // 这个[]表示只模拟componentDidMount
   }, [])
 
-  // const [options, setOptions] = useState([
-  //   {
-  //     value: "zhejiang",
-  //     label: "Zhejiang",
-  //     isLeaf: false
-  //   },
-  //   {
-  //     value: "jiangsu",
-  //     label: "Jiangsu",
-  //     isLeaf: false
-  //   }
-  // ]);
-
-  // 由于使用了cascader组件  我们需要将subjectList中的数据结构
-  // 改成cascader组件的数据结构
-  const options = subjectList.map(subject => {
-    return {
-      value: subject._id,
-      label: subject.title,
-      // false表示有子数据
-      isLeaf: false
-    }
-  })
+  // 由于使用了cascader组件,我们需要将subjectList中的数据结构,改成cascader组件要求的数据结构
 
   const onChange = (value, selectedOptions) => {
-    console.log(value, selectedOptions);
-  };
+    console.log(value, selectedOptions)
+  }
+  //#region
+  // 分类loadData
+  // const loadData = selectedOptions => {
+  //   // console.log('多级下拉', selectedOptions)
+  //   // loadData 是点击一级或其他子级的时候会触发
+  //   // selectedOptions 是一个数组
+  //   // 如果点击一级菜单 selectedOptions存储的是一个值, 就是对应的一级菜单数据
+  //   // 如果点击二级菜单 selectedOptions存储的是两个值,第一个值是一级菜单,第二个值是二级菜单
+  //   // 如果点击二级菜单,意味着要获取的是三级菜单数据,就需要拿到二级菜单数据,根据二级获取三级
+  //   // 所以.每次都获取selectedOptions中最后一条数据
+  //   const targetOption = selectedOptions[selectedOptions.length - 1]
+  //   // cascader组件底层实现了正在加载. 只要给对应级数的数据添加loading,并赋值为true,就会展示正在加载
+  //   targetOption.loading = true
 
-  const loadData = selectedOptions => {
-    // const targetOption = selectedOptions[selectedOptions.length - 1];
-    // targetOption.loading = true;
+  //   // load options lazily
+  //   //未来要真正发送异步请求获取数据
+  //   setTimeout(() => {
+  //     // 表示请求成功
+  //     //让小圆圈隐藏
+  //     targetOption.loading = false
+  //     // 给当前级数的菜单添加子级数据
+  //     targetOption.children = [
+  //       {
+  //         label: `${targetOption.label} Dynamic 1`,
+  //         value: 'dynamic1',
+  //         // 如果子级数据后面还有子级数据,就加上这个isLeaf,如果没有就不用写
+  //         // 比如,当前项目,课程分类只有一级和二级,所以二级不需要添加了
+  //         isLeaf: false
+  //       },
+  //       {
+  //         label: `${targetOption.label} Dynamic 2`,
+  //         value: 'dynamic2',
+  //         isLeaf: false
+  //       }
+  //     ]
+  //     // setOptions([...options])
+  //     // 修改targetOption实际就是修改了subjectList里面的数据,所以直接调用setSubjectList让数据更新,视图重新渲染
+  //     setSubjectList([...subjectList])
+  //   }, 1000)
+  // }
+  //#endregion
 
-    // // load options lazily
-    // setTimeout(() => {
-    //   targetOption.loading = false;
-    //   targetOption.children = [
-    //     {
-    //       label: `${targetOption.label} Dynamic 1`,
-    //       value: "dynamic1"
-    //     },
-    //     {
-    //       label: `${targetOption.label} Dynamic 2`,
-    //       value: "dynamic2"
-    //     }
-    //   ];
-    //   setOptions([...options]);
-    // }, 1000);
-  };
+  const loadData = async selectedOptions => {
+    // 获取一级课程分类数据
+    const targetOption = selectedOptions[selectedOptions.length - 1]
+    // cascader组件底层实现了正在加载. 只要给对应级数的数据添加loading,并赋值为true,就会展示正在加载
+    targetOption.loading = true
+
+    //发送异步请求
+    // 调用之前定义好的方法,获取二级课程分类
+    let secSubject = await reqGetSecSubjectList(targetOption.value)
+    // console.log(secSubject)
+
+    // 由于cascader组件,对渲染的数据,有格式要求,所以必须将二级分类数据,也进行数据重构
+    secSubject = secSubject.items.map(item => {
+      return {
+        value: item._id,
+        label: item.title
+      }
+    })
+    // 让小圆圈隐藏
+    targetOption.loading = false
+
+    // 代码优化
+    if (secSubject.length > 0) {
+      // 将二级数据添加给一级的children属性
+      targetOption.children = secSubject
+    } else {
+      targetOption.isLeaf = true
+    }
+
+    // 更新subject
+    setSubjectList([...subjectList])
+  }
 
   const resetForm = () => {
-    form.resetFields();
-  };
+    form.resetFields()
+  }
 
   return (
-    <Form layout="inline" form={form}>
-      <Form.Item name="title" label="标题">
-        <Input placeholder="课程标题" style={{ width: 250, marginRight: 20 }} />
+    <Form layout='inline' form={form}>
+      <Form.Item name='title' label='标题'>
+        <Input placeholder='课程标题' style={{ width: 250, marginRight: 20 }} />
       </Form.Item>
-      <Form.Item name="teacherId" label="讲师">
+      <Form.Item name='teacherId' label='讲师'>
         <Select
           allowClear
-          placeholder="课程讲师"
+          placeholder='课程讲师'
           style={{ width: 250, marginRight: 20 }}
         >
           {teacherList.map(item => (
-            <Option value={item._id} key={item._id}>
+            <Option key={item._id} value={item._id}>
               {item.name}
             </Option>
           ))}
-          {/* <Option value="lucy1">Lucy1</Option>
-          <Option value="lucy2">Lucy2</Option>
-          <Option value="lucy3">Lucy3</Option> */}
+          {/* <Option value='lucy1'>Lucy1</Option>
+          <Option value='lucy2'>Lucy2</Option>
+          <Option value='lucy3'>Lucy3</Option> */}
         </Select>
       </Form.Item>
-      <Form.Item name="subject" label="分类">
+      <Form.Item name='subject' label='分类'>
         <Cascader
           style={{ width: 250, marginRight: 20 }}
-          // 多级菜单数据
-          options={options}
-          // 当点击某一项的时候触发 可以得到下一级数据
+          // 多级拉下菜单的数据
+          options={subjectList}
+          // 点击课程分类的时候,loadData会触发,在这里去加载二级数据
           loadData={loadData}
+          // 选中课程分类之后触发
           onChange={onChange}
-          changeOnSelect
-          placeholder="课程分类"
+          // changeOnSelect
+          placeholder='课程分类'
         />
       </Form.Item>
       <Form.Item>
         <Button
-          type="primary"
-          htmlType="submit"
-          style={{ margin: "0 10px 0 30px" }}
+          type='primary'
+          htmlType='submit'
+          style={{ margin: '0 10px 0 30px' }}
         >
           查询
         </Button>
         <Button onClick={resetForm}>重置</Button>
       </Form.Item>
     </Form>
-  );
+  )
 }
 
-export default SearchForm;
+export default SearchForm
