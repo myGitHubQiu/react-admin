@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Menu, Dropdown, Breadcrumb } from "antd";
+import { Layout, Menu, Dropdown, Breadcrumb, Button } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -17,6 +17,9 @@ import { logout } from "@redux/actions/login";
 import { resetUser } from "../../components/Authorized/redux";
 import logo from "@assets/images/logo.png";
 import { findPathIndex } from "@utils/tools";
+
+// 引入pubsub
+import PubSub from 'pubsub-js'
 
 // 引入组件公共样式
 import "@assets/css/common.less";
@@ -37,6 +40,8 @@ const { Header, Sider, Content } = Layout;
 class PrimaryLayout extends Component {
   state = {
     collapsed: false,
+    // 当前什么语言 就高亮
+    currentLanguage: window.navigator.language === 'zh-CN' ? 'zh' : 'en'
   };
 
   toggle = () => {
@@ -75,6 +80,19 @@ class PrimaryLayout extends Component {
       </Menu.Item>
     </Menu>
   );
+
+
+
+  // 切换
+  handleChangLanguage = language => () => {
+    // 将选中的语言传到app组件里面 其实要用redux  选中使用pubsub
+    // 发布信息
+    PubSub.publish('LANGUAGE', language)
+    // 修改状态数据
+    this.setState({
+      currentLanguage: language
+    })
+  }
 
   selectRoute = (routes = [], pathname) => {
     for (let i = 0; i < routes.length; i++) {
@@ -131,7 +149,7 @@ class PrimaryLayout extends Component {
     );
   };
 
-  render() {
+  render () {
     const { collapsed } = this.state;
     const {
       routes,
@@ -140,6 +158,28 @@ class PrimaryLayout extends Component {
     } = this.props;
 
     const route = this.selectRoute(routes, pathname);
+
+    // 国际化
+    const intlMenu = (
+      <Menu >
+        <Menu.Item key='zh'>
+          <Button
+            type={this.state.currentLanguage === 'zh' ? 'link' : 'text'}
+            onClick={this.handleChangLanguage('zh')}
+          >
+            中文
+          </Button>
+        </Menu.Item>
+        <Menu.Item key='en' >
+          <Button
+            type={this.state.currentLanguage === 'en' ? 'link' : 'text'}
+            onClick={this.handleChangLanguage('en')}
+          >
+            English
+          </Button>
+        </Menu.Item>
+      </Menu>
+    )
 
     return (
       <Layout className="layout">
@@ -170,7 +210,9 @@ class PrimaryLayout extends Component {
                   </span>
                 </Dropdown>
                 <span className="site-layout-lang">
-                  <GlobalOutlined />
+                  <Dropdown overlay={intlMenu}>
+                    <GlobalOutlined />
+                  </Dropdown>
                 </span>
               </span>
             </span>

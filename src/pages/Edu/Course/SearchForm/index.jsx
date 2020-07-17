@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Cascader, Button } from "antd";
+import { Form, Input, Select, Cascader, Button, message } from "antd";
+
+// 引入高阶组件
+import { connect } from 'react-redux'
 
 // 引入 获取所有讲师列表的api
 import { reqGetAllTeacherList } from '@api/edu/teacher'
@@ -7,11 +10,22 @@ import { reqGetAllTeacherList } from '@api/edu/teacher'
 // 引入 获取所有一级分类课程数据的api
 import { reqAllSubjectList, reqGetSecSubjectList } from '@api/edu/subject'
 
+// 在要实现国际化的页面中
+// 引入FormattedMessage
+// 页面中不是所有都能使用FormattedMessage，那就使用useIntl
+import { FormattedMessage, useIntl } from 'react-intl'
+
+// 引入redux获取数据的异步方法 getCourseList
+import { getCourseList } from '../redux/index'
+
 import "./index.less";
 
 const { Option } = Select
 
-function SearchForm () {
+function SearchForm (props) {
+  // 页面进来就要得到一个国际化对象
+  const intl = useIntl()
+
   const [form] = Form.useForm()
   // 定义存储讲师列表的状态
   const [teacherList, setTeacherList] = useState([])
@@ -55,7 +69,7 @@ function SearchForm () {
   // 由于使用了cascader组件,我们需要将subjectList中的数据结构,改成cascader组件要求的数据结构
 
   const onChange = (value, selectedOptions) => {
-    console.log(value, selectedOptions)
+    // console.log(value, selectedOptions)
   }
   //#region
   // 分类loadData
@@ -136,15 +150,67 @@ function SearchForm () {
     form.resetFields()
   }
 
+  // 点击查询按钮的事件处理函数
+  const finish = async value => {
+    console.log(value)
+    /*
+      注意：
+      1.如果subject数组中 只有一条数据
+      subjectId就是subject[0]
+      subjectParentId 就是0
+
+      2.如果subject数组中 有两条数据
+      subjectId就是subject[1] 
+      subjectParentId就是subject[0]
+    */
+
+    // 有可能subject没有选就是undefined
+    let subjectId
+    let subjectParentId
+    if (value.subject && value.subject.length > 1) {
+      // 说明有一级和二级
+      subjectId = value.subject[1]
+      subjectParentId = value.subject[0]
+    }
+    if (value.subject && value.subject.length === 1) {
+      // 说明有一级
+      subjectId = value.subject[0]
+      subjectParentId = 0
+    }
+    // 获取课程分页数据
+    const data = {
+      page: 1,
+      limit: 5,
+      title: value.title,
+      teacherId: value.teacherId,
+      subjectId: subjectId,
+      subjectParentId: subjectParentId
+    }
+    // 调用方法  发送数据 然后渲染
+    await props.getCourseList(data)
+    // 提示信息
+    message.success('课程数据获取成功')
+  }
+
   return (
-    <Form layout='inline' form={form}>
-      <Form.Item name='title' label='标题'>
-        <Input placeholder='课程标题' style={{ width: 250, marginRight: 20 }} />
+    <Form layout='inline' form={form} onFinish={finish}>
+      {/* <Form.Item name='title' label='标题'> 国际化之前的写法 */}
+      {/* 国际化写法 */}
+      <Form.Item name='title' label={<FormattedMessage id='title' />}>
+        <Input
+          placeholder={intl.formatMessage({
+            id: 'title'
+          })}
+          style={{ width: 250, marginRight: 20 }}
+        />
       </Form.Item>
-      <Form.Item name='teacherId' label='讲师'>
+      {/* <Form.Item name='teacherId' label='讲师'> */}
+      <Form.Item name='teacherId' label={<FormattedMessage id='teacher' />}>
         <Select
           allowClear
-          placeholder='课程讲师'
+          placeholder={intl.formatMessage({
+            id: 'teacher'
+          })}
           style={{ width: 250, marginRight: 20 }}
         >
           {teacherList.map(item => (
@@ -157,7 +223,8 @@ function SearchForm () {
           <Option value='lucy3'>Lucy3</Option> */}
         </Select>
       </Form.Item>
-      <Form.Item name='subject' label='分类'>
+      {/* <Form.Item name='subject' label='分类'> */}
+      <Form.Item name='subject' label={<FormattedMessage id='subject' />}>
         <Cascader
           style={{ width: 250, marginRight: 20 }}
           // 多级拉下菜单的数据
@@ -167,7 +234,9 @@ function SearchForm () {
           // 选中课程分类之后触发
           onChange={onChange}
           // changeOnSelect
-          placeholder='课程分类'
+          placeholder={intl.formatMessage({
+            id: 'subject'
+          })}
         />
       </Form.Item>
       <Form.Item>
@@ -176,12 +245,13 @@ function SearchForm () {
           htmlType='submit'
           style={{ margin: '0 10px 0 30px' }}
         >
-          查询
+          {/* 查询 */}
+          {<FormattedMessage id='searchBtn' />}
         </Button>
-        <Button onClick={resetForm}>重置</Button>
+        <Button onClick={resetForm}>{<FormattedMessage id='resetBtn' />}</Button>
       </Form.Item>
     </Form>
   )
 }
 
-export default SearchForm
+export default connect(null, { getCourseList })(SearchForm) 
