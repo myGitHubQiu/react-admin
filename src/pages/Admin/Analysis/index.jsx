@@ -174,6 +174,8 @@ export default class Analysis extends Component {
                 <Statistic title='运营结果' value={112893} />
               }
               footer={<span>进度条 80.9%</span>}
+            // 增加骨架组件
+            // loading = {this.state.loading}
             >
               {/*  Card组件中子节点 是Card的正文部分 */}
               <Progress
