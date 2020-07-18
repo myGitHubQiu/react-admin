@@ -15,15 +15,19 @@ export default class Card extends Component {
     loading: false,
   };
 
-  render() {
+  render () {
     const { title, footer, children, loading } = this.props;
 
     return (
       <div className="card">
         <Skeleton
+          // loading控制Skeleton（骨架）是显示还是隐藏
           loading={loading}
+          // 给骨架一个闪烁效果
           active
+          // 骨架长度
           title={{ width: "100%" }}
+          // 定义骨架内容 有几条 占多少
           paragraph={{ rows: 4, width: "100%" }}
         >
           <div className="card-header">

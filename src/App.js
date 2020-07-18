@@ -36,7 +36,7 @@ function App () {
   // const locale = window.navigator.language === 'zh-CN' ? 'zh' : 'en'
   // const locale = 'en'
   // 根据当前语言环境决定返回的是什么包
-  const messages = locale === 'en' ? en : zh
+  const message = locale === 'en' ? en : zh
   const antdLocale = locale === 'en' ? enUS : zhCN
   return (
     <Router history={history}>
@@ -45,7 +45,7 @@ function App () {
       messages-->选中哪个语言包
       */}
       <ConfigProvider locale={antdLocale}>
-        <IntlProvider locale={locale} messages={messages}>
+        <IntlProvider locale={locale} messages={message}>
           <Layout />
         </IntlProvider>
       </ConfigProvider>

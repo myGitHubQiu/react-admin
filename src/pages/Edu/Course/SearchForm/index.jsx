@@ -61,6 +61,8 @@ function SearchForm (props) {
       setSubjectList(options)
       setTeacherList(teachers)
       // setSubjectList(subjectList)
+
+
     }
 
     fetchData()
