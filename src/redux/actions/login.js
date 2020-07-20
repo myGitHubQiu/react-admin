@@ -1,17 +1,30 @@
 import { reqLogin, reqLogout } from "@api/acl/login";
+import { reqMobileLogin } from "@api/acl/oauth";
 import { LOGIN_SUCCESS, REMOVE_TOKEN } from "../constants/login";
 
 /**
  * 登陆
  */
+// 用户名+手机同步action
 const loginSuccessSync = user => ({
   type: LOGIN_SUCCESS,
   data: user
 });
-
+// 用户名异步action  
 export const login = (username, password) => {
   return dispatch => {
     return reqLogin(username, password).then(response => {
+      dispatch(loginSuccessSync(response));
+      // 返回token，外面才能接受
+      return response.token;
+    });
+  };
+};
+// reqMobileLogin
+// 手机异步action  
+export const mobilelogin = (mobile, code) => {
+  return dispatch => {
+    return reqMobileLogin(mobile, code).then(response => {
       dispatch(loginSuccessSync(response));
       // 返回token，外面才能接受
       return response.token;
