@@ -144,6 +144,12 @@ function LoginForm (props) {
     setActiveKey(activeKey)
   }
 
+  // 点击第三方的事件处理函数
+  const handleGitLogin = () => {
+    // 修改浏览器地址栏地址，让浏览器发送请求给gitHub
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=05de5a0fe6158c6ed70c`
+  }
+
   return (
     <>
       <Form
@@ -272,7 +278,7 @@ function LoginForm (props) {
             <Col span={16}>
               <span>
                 其他登陆方式
-                  <GithubOutlined className="login-icon" />
+                  <GithubOutlined className="login-icon" onClick={handleGitLogin} />
                 <WechatOutlined className="login-icon" />
                 <QqOutlined className="login-icon" />
               </span>

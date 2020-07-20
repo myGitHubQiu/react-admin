@@ -6,7 +6,7 @@ import { LOGIN_SUCCESS, REMOVE_TOKEN } from "../constants/login";
  * 登陆
  */
 // 用户名+手机同步action
-const loginSuccessSync = user => ({
+export const loginSuccessSync = user => ({
   type: LOGIN_SUCCESS,
   data: user
 });
