@@ -28,7 +28,7 @@ export default class Card extends Component {
           // 骨架长度
           title={{ width: "100%" }}
           // 定义骨架内容 有几条 占多少
-          paragraph={{ rows: 4, width: "100%" }}
+          paragraph={{ rows: 3, width: "100%" }}
         >
           <div className="card-header">
             {title}

@@ -7,6 +7,10 @@ import Analysis from "./Analysis";
 
 // 引入Scales
 import Scales from './Scales/index'
+// 引入Search
+import Search from './Search'
+// 
+import Static from './Static'
 
 export default class Admin extends Component {
   render () {
@@ -14,6 +18,9 @@ export default class Admin extends Component {
       <div>
         <Analysis />
         <Scales />
+        <Search />
+        <Static />
+
         {/* <Monitor />
         <Search />
         <Statistics /> */}

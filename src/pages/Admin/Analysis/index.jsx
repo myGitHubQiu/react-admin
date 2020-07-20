@@ -72,6 +72,26 @@ const firstRowCol = {
 }
 
 export default class Analysis extends Component {
+  // 定义骨架状态数据
+  state = {
+    loading: false
+  }
+
+  // 挂载时
+  componentDidMount () {
+    // 请求之前，改变展示
+    this.setState({
+      loading: true
+    })
+
+    // 拿到数据之后
+    setTimeout(() => {
+      this.setState({
+        loading: false
+      })
+    }, 2000)
+  }
+
   render () {
     return (
       <div>
@@ -174,8 +194,8 @@ export default class Analysis extends Component {
                 <Statistic title='运营结果' value={112893} />
               }
               footer={<span>进度条 80.9%</span>}
-            // 增加骨架组件
-            // loading = {this.state.loading}
+              // 增加骨架组件 就是刚刚打开页面还没有拿到数据的时候展示骨架 拿到数据后渲染页面
+              loading={this.state.loading}
             >
               {/*  Card组件中子节点 是Card的正文部分 */}
               <Progress
