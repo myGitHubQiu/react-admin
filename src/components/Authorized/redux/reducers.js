@@ -1,29 +1,32 @@
-import { UPDATE_USER, UPDATE_PERMISSION_LIST, RESET_USER } from "./constants";
 
-const initUser = {
-  roles: [], // 权限
-  name: "", // 用户名
-  avatar: "", // 头像
-  permissionValueList: [], // 按钮权限
-  permissionList: [], // 路由/菜单权限
-};
+// 引入常量
+import { GET_USER_INFO, GET_USER_MENU } from './constants'
 
-export default function user(prevState = initUser, action) {
+// 定义数据
+const initUserInfo = {
+  // 用户名
+  name: '',
+  // 用户头像
+  avatar: '',
+  // 用户按钮权限列表
+  permissionValueList: [],
+  // 用户路由权限列表
+  permissionList: []
+}
+
+export default function user (prevState = initUserInfo, action) {
   switch (action.type) {
-    case UPDATE_USER:
+    case GET_USER_INFO:
       return {
         ...prevState,
-        ...action.data,
-        permissionList: prevState.permissionList,
-      };
-    case UPDATE_PERMISSION_LIST:
+        ...action.data
+      }
+    case GET_USER_MENU:
       return {
         ...prevState,
-        permissionList: action.data,
-      };
-    case RESET_USER:
-      return initUser;
+        permissionList: action.data
+      }
     default:
-      return prevState;
+      return prevState
   }
 }

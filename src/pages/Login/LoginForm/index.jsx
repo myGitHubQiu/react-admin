@@ -58,12 +58,11 @@ function LoginForm (props) {
   // };
 
   const onFinish = () => {
-    console.log(11)
-    console.log(activeKey)
+    // console.log(activeKey)
     if (activeKey === 'user') {
       // 校验用户名和密码
       form.validateFields(['username', 'password']).then(res => {
-        console.log(res)
+        // console.log(res)
         let { username, password } = res
         props.login(username, password).then((token) => {
           // 登录成功
@@ -90,9 +89,9 @@ function LoginForm (props) {
   }
 
   // 密码校验
-  const validator = (rule, value) => {
+  const validator = (rules, value) => {
     return new Promise((resolve, reject) => {
-      console.log(rule, value)
+      console.log(rules, value)
       if (!value) {
         return reject('密码不能为空')
       }
