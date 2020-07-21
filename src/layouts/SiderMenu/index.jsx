@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { Link, withRouter } from 'react-router-dom'
+
 import { Layout, Menu, Breadcrumb } from 'antd'
 import { defaultRoutes } from '@conf/routes'
 import {
@@ -14,8 +16,11 @@ import {
   MenuFoldOutlined
 } from '@ant-design/icons'
 
+import Icons from '@conf/icons'
+
 const { SubMenu } = Menu
 
+@withRouter
 @connect(state => ({ permissionList: state.user.permissionList }))
 class SiderMenu extends Component {
   // 定义一个函数，在函数中遍历数组，动态渲染左侧菜单
@@ -24,6 +29,7 @@ class SiderMenu extends Component {
     // menu就是要传进来的数组
     // 这个return是将renderMenu得到的新数组返回出去
     return menus.map(menu => {
+      const Icon = Icons[menu.icon]
       // 先判断该菜单是否要展示 true不展示 false展示
       if (menu.hidden) return
       // 下面是要展示的
@@ -31,12 +37,15 @@ class SiderMenu extends Component {
       if (menu.children && menu.children.length > 0) {
         // 有二级菜单
         return (
-          <SubMenu key={menu.path} icon={<UserOutlined />} title={menu.name}>
+          <SubMenu key={menu.path} icon={<Icon />} title={menu.name}>
             {menu.children.map(secMenu => {
               if (secMenu.hidden) return
               return (
-                <Menu.Item key={secMenu.path}>
-                  {secMenu.name}
+                // key= secMenu.path-->key= menu.path + secMenu.path
+                // 这里的key也要改 为了高亮
+                <Menu.Item key={menu.path + secMenu.path}>
+                  {/* 一级的path跟二级的path拼接 */}
+                  <Link to={menu.path + secMenu.path}>{secMenu.name}</Link>
                 </Menu.Item>
               )
             })}
@@ -46,14 +55,20 @@ class SiderMenu extends Component {
         // 只有一级菜单
         // 这里的return 是给新得到的数组添加一个菜单组件
         return (
-          <Menu.Item key={menu.path} icon={<PieChartOutlined />}>
-            {menu.name}
+          <Menu.Item key={menu.path} icon={<Icon />}>
+            {/* 判断一级菜单是否是'/' */}
+            {menu.path === '/' ? <Link to='/'>{menu.name}</Link> : menu.name}
           </Menu.Item>
         )
       }
     })
   }
   render () {
+    // 拿到location中的pathname  pathname就是我们地址栏中的地址
+    const path = this.props.location.pathname
+    // 展开
+    const reg = /[/][a-z]*/
+    const firstPath = path.match(reg)[0]
     return (
       <>
         {/* 
@@ -61,7 +76,14 @@ class SiderMenu extends Component {
         1.config/routes.js/defaultRoutes==>登陆之后的首要 这里没有children
         2.redux中的permissionList==>权限管理 教育管理 个人管理
       */}
-        <Menu theme='dark' defaultSelectedKeys={['1']} mode='inline'>
+        <Menu
+          theme='dark'
+          // defaultSelectedKeys实现高亮
+          defaultSelectedKeys={[path]}
+          // 实现展开项 用defaultOpenKeys
+          defaultOpenKeys={[firstPath]}
+          mode='inline'
+        >
           {this.renderMenu(defaultRoutes)}
           {this.renderMenu(this.props.permissionList)}
           {/* <Menu.Item key='1' icon={<PieChartOutlined />}>

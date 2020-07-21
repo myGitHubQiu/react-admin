@@ -16,19 +16,63 @@ import SiderMenu from '../SiderMenu/index'
 
 import logo from '@assets/images/logo.png'
 
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+
 const { Header, Content, Footer, Sider } = Layout
 const { SubMenu } = Menu
 
-export default class PrimaryLayout extends Component {
+// user数据在redux中 需要通过高阶组件connect拿到
+@withRouter
+@connect(
+  state => ({ user: state.user })
+)
+class PrimaryLayout extends Component {
   state = {
     collapsed: false
   }
 
   onCollapse = collapsed => {
-    console.log(collapsed)
+    // console.log(collapsed)
     this.setState({ collapsed })
   }
   render () {
+    // 从高阶组件中的state中拿到了user中的name avatar,permissionList属性值
+    let { name, avatar, permissionList } = this.props.user
+    // console.log(this.props)
+
+    // 获取浏览器地址栏中的路径
+    const path = this.props.location.pathname
+    // console.log(path) 拿到的是/ 或者 /edu/.../...
+    // 把上面的路径正则匹配 g表示全部提取 不写g就提取符合的第一个
+    const reg = /[/][a-z]*/g
+    const allPath = path.match(reg)
+    // console.log(allPath)   ["/acl", "/user", "/list"]
+    // 把每个地址栏地址分割并得到
+    // 获取一级path
+    const firstPath = allPath[0]
+    // 获取二级path的第一个
+    const secPath = allPath[1]
+    // 获取二级path的第二个 没有就返回空字符串
+    const thirdPath = allPath[2] || ''
+    // 遍历 查找对应的一级菜单名称和二级菜单名称 
+    // 菜单名称在permissionList数据中
+    let firstName
+    let secName
+    // 遍历一级菜单
+    permissionList.forEach(item => {
+      if (item.path === firstPath) {
+        // 得到一级菜单名称
+        firstName = item.name
+        // 遍历二级菜单
+        item.children.forEach(secItem => {
+          if (secItem.path === secPath + thirdPath) {
+            // 得到二级菜单名称
+            secName = secItem.name
+          }
+        })
+      }
+    })
     return (
       <Layout className='layout'>
         <Sider
@@ -65,17 +109,24 @@ export default class PrimaryLayout extends Component {
 
         <Layout className='site-layout'>
           <Header className='layout-header'>
-            <img src={logo} alt='' />
-            <span>用户名</span>
+            {/* 上面props中得到数据了 这里就可以直接使用 */}
+            <img src={avatar} alt='logo图片' />
+            <span>{name}</span>
             <GlobalOutlined />
           </Header>
           <Content>
             <div className='layout-nav'>
-              <Breadcrumb>
-                <Breadcrumb.Item>User</Breadcrumb.Item>
-                <Breadcrumb.Item>Bill</Breadcrumb.Item>
-              </Breadcrumb>
-              <div>提示文字</div>
+              {
+                firstName === undefined ? '首页' :
+                  <>
+                    <Breadcrumb>
+                      <Breadcrumb.Item>{firstName}</Breadcrumb.Item>
+                      <Breadcrumb.Item>{secName}</Breadcrumb.Item>
+                    </Breadcrumb>
+                  </>
+              }
+
+              <div className='secName'>{secName}</div>
             </div>
 
             <div className='layout-content'>Bill is a cat.</div>
@@ -88,3 +139,4 @@ export default class PrimaryLayout extends Component {
     )
   }
 }
+export default PrimaryLayout

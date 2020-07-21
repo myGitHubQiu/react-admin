@@ -52,7 +52,7 @@ export default class AuthorizedRouter extends Component {
     return composeRoutes;
   };
 
-  render() {
+  render () {
     const { routes } = this.props;
 
     const initRoutes = this.renderRoutes(defaultRoutes);

@@ -43,6 +43,12 @@
 .layout-nav div {
   margin-top: 10px;
 }
+.layout-nav .secName {
+  font-size: 22px;
+  font-weight: 300px;
+  color: skyblue;
+  font-family: '仿宋';
+}
 .layout-content {
   padding: 20px;
 }
