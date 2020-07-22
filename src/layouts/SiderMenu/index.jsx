@@ -3,18 +3,8 @@ import { connect } from 'react-redux'
 
 import { Link, withRouter } from 'react-router-dom'
 
-import { Layout, Menu, Breadcrumb } from 'antd'
+import { Menu } from 'antd'
 import { defaultRoutes } from '@conf/routes'
-import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
-  GlobalOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined
-} from '@ant-design/icons'
 
 import Icons from '@conf/icons'
 

@@ -19,6 +19,9 @@ import logo from '@assets/images/logo.png'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
+// 引入要渲染的那一推组件
+import AuthorizedRouter from '@comps/Authorized/AuthorizedRouter'
+
 const { Header, Content, Footer, Sider } = Layout
 const { SubMenu } = Menu
 
@@ -129,7 +132,10 @@ class PrimaryLayout extends Component {
               <div className='secName'>{secName}</div>
             </div>
 
-            <div className='layout-content'>Bill is a cat.</div>
+            <div className='layout-content'>
+              {/* 这里渲染的是一推组件 代码很多，拿到另一个单独的组件里面写，这里引进就好*/}
+              <AuthorizedRouter></AuthorizedRouter>
+            </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
             Ant Design ©2018 Created by Ant UED
